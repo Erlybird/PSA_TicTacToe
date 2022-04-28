@@ -3,17 +3,19 @@ package org.example;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import java.util.logging.*;
+
 import javax.swing.*;
-import javax.swing.Timer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import javax.swing.JButton;
 
 /**
- * Hello world!
+ * Author:Jayesh Khattar
  *
  */
 public class App implements ActionListener {
 
-    private static final Logger logger = Logger.getLogger(String.valueOf(App.class));
+    private static final Logger logger = LogManager.getLogger(App.class);
     Random random = new Random();
     JFrame frame = new JFrame();
 
@@ -36,6 +38,8 @@ public class App implements ActionListener {
     JLabel lblLooseCnt = new JLabel();
     JLabel lblDraw = new JLabel();
     JLabel lblDrawCnt = new JLabel();
+    JLabel lblTotal = new JLabel();
+    JLabel lblTotalCnt = new JLabel();
 
 
     JButton btnSimulation = new JButton();
@@ -45,9 +49,20 @@ public class App implements ActionListener {
     JButton[][] buttons = new JButton[3][3];
     Board board;
 
-    Map<String, Integer> map1 = new Hashtable<>();
+    Map<String, Integer> mov1 = new Hashtable<>();
+    Map<String, Integer> mov2 = new Hashtable<>();
+    Map<String, Integer> mov3 = new Hashtable<>();
+    Map<String, Integer> mov4 = new Hashtable<>();
+    int win = 0;
+    int lose = 0;
+    int draw = 0;
+
+    int movCount = 0;
+    String movCopy = "";
+
     App()
     {
+        logger.info("initiating application");
         configureLayout();
 
         addButtons();
@@ -69,7 +84,7 @@ public class App implements ActionListener {
         }
     }
 
-    private void restartTheGame(){
+    public void restartTheGame(){
         button_panel.removeAll();
         addButtons();
         board = new Board();
@@ -117,16 +132,49 @@ public class App implements ActionListener {
         btnSimulation.setHorizontalAlignment(JButton.CENTER);
         btnSimulation.setBorder(BorderFactory.createLineBorder(new Color(40,40,40), 5));
         btnSimulation.setMargin(new Insets(10, 30, 10, 30));
-        btnSimulation.setText("Simulation");
+        btnSimulation.setText("Train Menace");
         btnSimulation.setOpaque(true);
 
+        lblTotal.setText("Total Count : ");
+        lblTotal.setForeground(new Color(255,255,255));
+        lblTotal.setFont(new Font("Times New Roman",Font.PLAIN,20));
+        lblWin.setText("Won Count : ");
+        lblWin.setForeground(new Color(255,255,255));
+        lblWin.setFont(new Font("Times New Roman",Font.PLAIN,20));
+        lblLoose.setText("Loose Count : ");
+        lblLoose.setForeground(new Color(255,255,255));
+        lblLoose.setFont(new Font("Times New Roman",Font.PLAIN,20));
+        lblDraw.setText("Draw Count : ");
+        lblDraw.setForeground(new Color(255,255,255));
+        lblDraw.setFont(new Font("Times New Roman",Font.PLAIN,20));
 
+        lblWinCnt.setForeground(new Color(255,255,255));
+        lblWinCnt.setFont(new Font("Times New Roman",Font.PLAIN,20));
+        lblLooseCnt.setForeground(new Color(255,255,255));
+        lblLooseCnt.setFont(new Font("Times New Roman",Font.PLAIN,20));
+        lblDrawCnt.setForeground(new Color(255,255,255));
+        lblDrawCnt.setFont(new Font("Times New Roman",Font.PLAIN,20));
+        lblTotalCnt.setForeground(new Color(255,255,255));
+        lblTotalCnt.setFont(new Font("Times New Roman",Font.PLAIN,20));
+
+//        result_panel.setLayout(new GridLayout(1,3));
+        result_panel.setBackground(new Color(0,0,0));
+        result_panel.add(lblTotal);
+        result_panel.add(lblTotalCnt);
+        result_panel.add(lblWin);
+        result_panel.add(lblWinCnt);
+        result_panel.add(lblLoose);
+        result_panel.add(lblLooseCnt);
+        result_panel.add(lblDraw);
+        result_panel.add(lblDrawCnt);
+        result_panel.add(lblTotal);
+        result_panel.add(lblTotalCnt);
 
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
         mainPanel.add(heading_panel);
         mainPanel.add(difiiculty_panel);
-        mainPanel.add(title_panel);
+        mainPanel.add(result_panel);
 
         heading_panel.setLayout(new GridLayout());
         heading_panel.setBounds(0,0,800,100);
@@ -139,16 +187,11 @@ public class App implements ActionListener {
         difiiculty_panel.setBackground(new Color(255,255,255));
         difiiculty_panel.setBounds(150,0,800,50);
 
-        //     result_panel.setLayout(new GridLayout(1,3));
-        //   result_panel.setBackground(new Color(255,255,255));
-        // result_panel.setBounds(150,0,800,50);
-
         button_panel.setLayout(new GridLayout(3,3));
         button_panel.setBackground(new Color(0,0,0));
 
-        difiiculty_panel.add(human);
         difiiculty_panel.add(btnSimulation);
-
+        difiiculty_panel.add(human);
 
         title_panel.add(textfield);
         heading_panel.add(game_h1);
@@ -158,110 +201,261 @@ public class App implements ActionListener {
         //    frame.add(result_panel);
 
         textfield.setText("Select Game Type");
+        JOptionPane.showMessageDialog(frame,"First Run Training... Click on Train Menace Button");
     }
 
 
     public static void main( String[] args )
     {
-        logger.info("App Class main method");
+        logger.info("Application main method called");
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
         new App();
     }
 
 
     void recolor() {
+
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
+                if (board.board[i][j] == 'E') {
+//                    buttons[i][j].setForeground();
+                    buttons[i][j].setText("");
+                    buttons[i][j].setEnabled(true);
+                }
                 if (board.board[i][j] == 'X') {
                     buttons[i][j].setForeground(new Color(255,0,0));
                     buttons[i][j].setText("X");
-//                    buttons[i][j].setEnabled(false);
+                    buttons[i][j].setEnabled(false);
                 } else if (board.board[i][j] == 'O') {
                     buttons[i][j].setForeground(new Color(0,0,255));
                     buttons[i][j].setText("O");
-//                    buttons[i][j].setEnabled(false);
+                    buttons[i][j].setEnabled(false);
                 } else buttons[i][j].setBackground(new Button().getBackground());
             }
         }
     }
 
-    private void allActionListener() {
+    public void allActionListener() {
         btnSimulation.addActionListener(e ->
         {
-            simulationFunction();
+            try {
+                simulationFunction();
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        human.addActionListener(e ->{
+            startGame();
         });
     }
 
-    public void simulationFunction() {
+    public void startGame() {
+        board = new Board();
+        recolor();
+        movCount = 0;
+        movCopy = "";
+    }
+
+    public void simulationFunction() throws InterruptedException {
         Random rn = new Random();
-        for(int kk=0;kk<100;kk++){
-            Timer timer = new Timer(300, new ActionListener()
-            {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    int i = 0, j = 0;
-                    Set<Board> localLst = new HashSet<Board>();
-                    //move 1
-                    Minimax min = new Minimax();
-                    int move = min.minimax(board, board.player);
+        for(int kk=0;kk<100;kk++) {
+            try {
+                int i = 0, j = 0;
+                Map<Integer, String> movMap = new Hashtable<>();
+                int mov=0;
+                String movState = "";
+                while (!board.finished) {
+                    int answer = board.availableMoves.get(rn.nextInt(board.availableMoves.size()));
+                    movState += answer;
+                    i = answer / 3;
+                    j = answer % 3;
+                    board.move(i, j);
                     recolor();
+                    System.out.println("Board after X move - ");
                     board.printBoard();
-                    try { Thread.sleep(200);} catch (InterruptedException ex) {ex.printStackTrace();}
-
-
                     System.out.println();
                     if (board.finished) {
-                        logger.info("Hello this is a info message");
-                        logger.log(Level.ALL, "here");
-                        ((Timer)e.getSource()).stop();
-                        System.out.println(board.winner == 'X' ? "RED WINS!" : board.winner == 'O' ? "BLUE WINS!" : "DRAW!");
-                        try { Thread.sleep(1300);} catch (InterruptedException ex) {ex.printStackTrace();}
-                        restartTheGame();
-                        localLst.add(board);
-                        //enableBoxes(false);
+                        logger.info("Game ended. "+(board.winner == 'X' ? "X(Random Bot) WINS!" : board.winner == 'O' ? "O(Training Menace) WINS!" : "DRAW!"));
                     } else {
-                        int answer = board.availableMoves.get(rn.nextInt(board.availableMoves.size()));
-                        i = answer / 3;
-                        j = answer % 3;
-                        board.move(i, j);
+                        Minimax min = new Minimax();
+                        int move = min.minimax(board, board.player);
+                        movState += move;
+                        System.out.println("Board after O move - ");
                         board.printBoard();
                         System.out.println();
                         recolor();
-                        try { Thread.sleep(200);} catch (InterruptedException ex) {ex.printStackTrace();}
-                        localLst.add(board);
                     }
-
                     if (board.finished) {
-                        System.out.println(board.winner == 'X' ? "RED WINS!" : board.winner == 'O' ? "BLUE WINS!" : "DRAW!");
-                        textfield.setText( board.winner == 'X' ? "RED WINS!" : board.winner == 'O' ? "BLUE WINS!" : "DRAW!");
-                        ((Timer)e.getSource()).stop();
-
-                        try { Thread.sleep(1300);} catch (InterruptedException ex) {ex.printStackTrace();}
-                        restartTheGame();
+                        logger.info("Game ended. "+(board.winner == 'X' ? "X(Random Bot) WINS!" : board.winner == 'O' ? "O(Training Menace) WINS!" : "DRAW!"));
                     }
-                  //  try { Thread.sleep(1000);} catch (InterruptedException ex) {ex.printStackTrace();}
-                    for (Board b : localLst) {
-                        int cx = 0;
-                        if (map1.containsKey(b.boardKey()))
-                            cx = map1.get(b.boardKey());
-                        if (board.winner == 'x')
-                            cx++;
-                        else if (board.winner == 'o')
-                            cx--;
-                        map1.put(b.boardKey(), cx);
+                    movMap.put(mov,movState);
+                    mov++;
+                }
+                calculateTotals();
+                for (Integer b : movMap.keySet()) {
+                    int cx = 0;
+                    String key = movMap.get(b);
+                    switch(b) {
+                        case 0: {
+                            if (mov1.containsKey(key))
+                                cx = mov1.get(key);
+                            giveScore(mov1, key, cx);
+                            break;
+                        }
+                        case 1:
+                            if (mov2.containsKey(key))
+                                cx = mov2.get(key);
+                            giveScore(mov2, key, cx);
+                            break;
+                        case 2:
+                            if (mov3.containsKey(key))
+                                cx = mov3.get(key);
+                            giveScore(mov3, key, cx);
+                            break;
+                        case 3:
+                            if (mov4.containsKey(key))
+                                cx = mov4.get(key);
+                            giveScore(mov4, key, cx);
+                            break;
+                        default:
+                            break;
                     }
                 }
-            });
-            timer.start();
-            for (String str : map1.keySet()) {
-                System.out.println("Board - " + str + " value - " + map1.get(str));
+                restartTheGame();
             }
+            catch (Exception ex) {
+                logger.info("Exception occurred in training mode -"+ex.getMessage());
+            }
+        }
+        logger.info("Training Finished. Menace ready to challange.");
+        logger.info("Win Count = "+win);
+        logger.info("Lose Count = "+lose);
+        logger.info("Draw Count = "+draw);
+        lblWinCnt.setText(String.valueOf(win));
+        lblLooseCnt.setText(String.valueOf(lose));
+        lblDrawCnt.setText(String.valueOf(draw));
+        lblTotalCnt.setText(String.valueOf(win+lose+draw));
+        JOptionPane.showMessageDialog(frame,"Training Finished.. Play against player .. Click on Player Button");
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        movCount++;
+        playTurn(e);
+    }
+
+    public void playTurn(ActionEvent e) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (buttons[i][j].equals(e.getSource())) {
+                    buttons[i][j].setEnabled(false);
+
+                    if (board.player == 'X') {
+                        movCopy += (i*3+j);
+                        board.move(i, j);
+                        recolor();
+                    }
+                    try {
+                        if (board.player == 'O') {
+                            int mov = useHashMap(i,j);
+                            recolor();
+                        }
+                    }
+                    catch (Exception ex) {
+                        logger.info("Exception occurred in menace move-"+ex.getMessage());
+                    }
+                    if (board.finished) {
+                        JOptionPane.showMessageDialog(frame,
+                                board.winner == 'X' ? "Player WINS!" :
+                                        board.winner == 'O' ? "Menace WINS!" :
+                                                "DRAW!");
+                    }
+                }
+            }
+        }
+    }
+    public int useHashMap(int i, int j) {
+        int m = 0;
+        if(movCount == 1) {
+            m = returnState(mov1);
+        }
+        else if(movCount == 2) {
+            m = returnState(mov2);
+        }
+        else if(movCount == 3) {
+            m = returnState(mov3);
+        }
+        else if(movCount == 4) {
+            m = returnState(mov4);
+        }
+        if(m != 0) {
+            i = m/3;
+            j = m%3;
+            board.move(i, j);
+            return m;
+        }
+        else {
+            Minimax min = new Minimax();
+            min.minimax(board, board.player);
+        }
+        return m;
+    }
+
+    public void giveScore(Map<String, Integer> mov, String key, int cx) {
+        if (board.winner == 'O') {
+            cx++;
+            logger.info("Game status - Menace Wins "+"beta score for "+key +" position - "+cx);
+        } else if (board.winner == 'X') {
+            cx--;
+            logger.info("Game status - Random Bot Wins "+"gama score for "+key +" position - "+cx);
+        }
+        else {
+            logger.info("Game status - Draw "+"delta score for "+key +" position - "+cx);
+        }
+        mov.put(key, cx);
+    }
+
+    public void calculateTotals() {
+        if (board.winner == 'O') {
+            win++;
+        } else if (board.winner == 'X') {
+            lose++;
+        }
+        else {
+            draw++;
         }
 
     }
 
+    public int returnState(Map<String, Integer> mov) {
+        String stat = "";
+        int high = Integer.MIN_VALUE;
+        for(String state : mov.keySet()) {
+            if(state.startsWith(movCopy) & mov.get(state) > high) {
+                high = mov.get(state);
+                stat = state;
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
+            }
+        }
+        int ans=0;
+        if(stat != "") {
+            ans = Integer.parseInt(stat.substring(stat.length()-1));
+        }
+        return ans;
     }
 }

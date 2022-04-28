@@ -1,6 +1,10 @@
 package org.example;
 
 import java.util.ArrayList;
+/**
+ * Author:Mayank Yadav
+ *
+ */
 
 public class Board {
 
@@ -11,7 +15,6 @@ public class Board {
     int moves;
     public boolean finished;
     ArrayList<Integer> availableMoves;
-    ArrayList<Integer> takenMove;
 
     public String boardKey() {
         String key = "";
@@ -22,6 +25,7 @@ public class Board {
         }
         return key;
     }
+
     public Board() {
         this.board = new char[3][3];
         this.player = 'X';
@@ -29,7 +33,6 @@ public class Board {
         this.finished = false;
         this.moves = 0;
         this.availableMoves = new ArrayList<Integer>();
-        this.takenMove = new ArrayList<Integer>();
 
         // set all board pieces with empty (no player has marked it yet)
         for (int i=0; i<3; i++)
@@ -73,12 +76,14 @@ public class Board {
         this.moves++;
 
         this.availableMoves.remove(Integer.valueOf(x * 3 + y));
-        if (this.player == 'O') {
-            this.takenMove.add(Integer.valueOf(x * 3 + y));
-        }
 
         this.checkWinner();
-        if (!this.finished) this.player = this.player == 'X' ? 'O' : 'X';
+        if (!this.finished) {
+            if(this.player == 'X')
+                this.player = 'O';
+            else
+                this.player = 'X';
+        }
     }
 
 
@@ -130,14 +135,6 @@ public class Board {
         if (this.availableMoves.size() == 0 && this.winner == 'E') {
             this.finished = true;
         }
-    }
-
-
-    // command-line printing of the winner
-    void printWinner()
-    {
-        if (this.winner != 'E') System.out.println(this.player + " WINS!");
-        else System.out.println("DRAW!");
     }
 
     // returns a copy of the board

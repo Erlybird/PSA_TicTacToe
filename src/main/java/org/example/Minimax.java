@@ -2,7 +2,10 @@ package org.example;
 
 public class Minimax {
 
-
+    /**
+     * Author:Mayank Yadav
+     *
+     */
     public int minimax(Board currentBoard, char currentPlayer) {
         if (currentBoard.finished) return utility(currentBoard, currentPlayer);
         if (currentBoard.player == currentPlayer) return max_node(currentBoard, currentPlayer);
